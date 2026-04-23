@@ -1,0 +1,4 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: system-ui, sans-serif; background: #0a0a0f; color: #fff; }
+input { font-family: system-ui, sans-serif; }
+button { cursor: pointer; font-family: system-ui, sans-serif; }
