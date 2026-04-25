@@ -1,4 +1,9 @@
 require('dotenv').config();
+if (!process.env.MONGODB_URI) {
+  console.error('MONGODB_URI is not set!');
+  console.log('Available env vars:', Object.keys(process.env));
+  process.exit(1);
+}
 
 const express = require('express');
 const mongoose = require('mongoose');
