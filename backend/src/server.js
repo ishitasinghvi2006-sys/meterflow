@@ -38,7 +38,8 @@ app.get('/health', (req, res) => {
 
 app.use(errorHandler);
 
-mongoose.connect(process.env.MONGO_URI)
+const MONGO_URI = process.env.MONGODB_URI || 'mongodb://meterflowUser:Meterflow2024@ac-uoeyouu-shard-00-00.qla2yaw.mongodb.net:27017,ac-uoeyouu-shard-00-01.qla2yaw.mongodb.net:27017,ac-uoeyouu-shard-00-02.qla2yaw.mongodb.net:27017/meterflow?ssl=true&replicaSet=atlas-13e8be-shard-0&authSource=admin&appName=meterflow';
+mongoose.connect(MONGO_URI)
   .then(() => {
     console.log('MongoDB connected');
     app.listen(process.env.PORT, () =>
