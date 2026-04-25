@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../services/api';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -12,13 +13,22 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
     try {
-      const res = await api.post('/auth/login', { email, password });
-      sessionStorage.setItem('token', res.data.accessToken);
+      const res = await fetch(`${API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Login failed');
+      sessionStorage.setItem('token', data.accessToken);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
-    } finally { setLoading(false); }
+      setError(err.message || 'Login failed');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -35,7 +45,6 @@ export default function Login() {
           </h2>
           <p style={{ color:'#888', fontSize:'1rem', lineHeight:1.6 }}>Track usage, apply rate limits, and bill your users — all in one platform.</p>
         </div>
-
         <div style={{ display:'flex', flexDirection:'column', gap:'1rem' }}>
           {['API Gateway with request tracking', 'Usage-based billing engine', 'Real-time analytics dashboard'].map(f => (
             <div key={f} style={{ display:'flex', alignItems:'center', gap:'10px' }}>
@@ -72,7 +81,7 @@ export default function Login() {
                 placeholder="••••••••" required />
             </div>
             <button type="submit" disabled={loading}
-              style={{ width:'100%', background:'linear-gradient(135deg, #6366f1, #8b5cf6)', color:'#fff', padding:'0.85rem', borderRadius:'10px', border:'none', fontWeight:'600', fontSize:'1rem', opacity: loading ? 0.7 : 1 }}>
+              style={{ width:'100%', background:'linear-gradient(135deg, #6366f1, #8b5cf6)', color:'#fff', padding:'0.85rem', borderRadius:'10px', border:'none', fontWeight:'600', fontSize:'1rem', cursor:'pointer', opacity: loading ? 0.7 : 1 }}>
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
