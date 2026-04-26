@@ -32,25 +32,32 @@ MeterFlow is a full-stack SaaS platform that lets developers monetize their APIs
 | Testing | Jest, Supertest |
 
 ## 📁 Project Structure
+## 📁 Project Structure
+
+```
 MeterFlow/
 ├── backend/
 │   ├── src/
-│   │   ├── config/        # Swagger, DB config
-│   │   ├── controllers/   # Route controllers
-│   │   ├── middleware/    # Auth, rate limiter, error handler
-│   │   ├── models/        # Mongoose models
-│   │   ├── routes/        # Express routes
-│   │   ├── services/      # Webhook, billing services
-│   │   └── server.js      # Entry point
-│   ├── tests/             # Jest tests
+│   │   ├── config/
+│   │   ├── controllers/
+│   │   ├── middleware/
+│   │   ├── models/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   └── server.js
+│   ├── tests/
 │   ├── Dockerfile
 │   ├── docker-compose.yml
 │   └── .env.example
-└── frontend/
-└── src/
-├── pages/         # Login, Register, Dashboard
-├── services/      # API service
-└── main.jsx
+├── frontend/
+│   └── src/
+│       ├── pages/
+│       ├── services/
+│       └── main.jsx
+├── docs/
+│   └── architecture.md
+└── README.md
+```
 
 ## ⚙️ Setup & Installation
 
