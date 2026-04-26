@@ -32,7 +32,6 @@ MeterFlow is a full-stack SaaS platform that lets developers monetize their APIs
 | Testing | Jest, Supertest |
 
 ## 📁 Project Structure
-## 📁 Project Structure
 
 ```
 MeterFlow/
