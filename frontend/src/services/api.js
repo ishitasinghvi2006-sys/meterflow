@@ -1,102 +1,49 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
+const getToken = () => sessionStorage.getItem('token');
+
 const api = {
-  // Auth
-  login: async (email, password) => {
-    const res = await fetch(`${API_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
+  get: async (endpoint) => {
+    const res = await fetch(`${API_URL}/api${endpoint}`, {
+      headers: { 'Authorization': `Bearer ${getToken()}` }
     });
-    return res.json();
+    const data = await res.json();
+    return { data };
   },
 
-  register: async (name, email, password) => {
-    const res = await fetch(`${API_URL}/api/auth/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password })
-    });
-    return res.json();
-  },
-
-  // API Keys
-  getApiKeys: async (token) => {
-    const res = await fetch(`${API_URL}/api/apis`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    return res.json();
-  },
-
-  createApiKey: async (token, data) => {
-    const res = await fetch(`${API_URL}/api/apis`, {
+  post: async (endpoint, body) => {
+    const res = await fetch(`${API_URL}/api${endpoint}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${getToken()}`
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(body)
     });
-    return res.json();
+    const data = await res.json();
+    return { data };
   },
 
-  // Usage
-  getUsage: async (token) => {
-    const res = await fetch(`${API_URL}/api/usage`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    return res.json();
-  },
-
-  // Billing
-  getBilling: async (token) => {
-    const res = await fetch(`${API_URL}/api/billing`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    return res.json();
-  },
-
-  // Webhooks
-  getWebhooks: async (token) => {
-    const res = await fetch(`${API_URL}/api/webhooks`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    return res.json();
-  },
-
-  createWebhook: async (token, data) => {
-    const res = await fetch(`${API_URL}/api/webhooks`, {
-      method: 'POST',
+  put: async (endpoint, body) => {
+    const res = await fetch(`${API_URL}/api${endpoint}`, {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${getToken()}`
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(body)
     });
-    return res.json();
+    const data = await res.json();
+    return { data };
   },
 
-  // Analytics
-  getErrors: async (token) => {
-    const res = await fetch(`${API_URL}/api/analytics/errors`, {
-      headers: { 'Authorization': `Bearer ${token}` }
+  delete: async (endpoint) => {
+    const res = await fetch(`${API_URL}/api${endpoint}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${getToken()}` }
     });
-    return res.json();
-  },
-
-  getLatency: async (token) => {
-    const res = await fetch(`${API_URL}/api/analytics/latency`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    return res.json();
-  },
-
-  // Audit Logs
-  getAuditLogs: async (token) => {
-    const res = await fetch(`${API_URL}/api/audit-logs`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    return res.json();
+    const data = await res.json();
+    return { data };
   }
 };
 
