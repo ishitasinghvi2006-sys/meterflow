@@ -34,6 +34,7 @@ export default function Dashboard() {
   const [newApi, setNewApi] = useState({ name:'', baseUrl:'' });
   const [creating, setCreating] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [activeSection, setActiveSection] = useState('Dashboard');
   const [chartData] = useState(generateChartData());
   const navigate = useNavigate();
 
@@ -67,6 +68,12 @@ export default function Dashboard() {
     } finally { setCreating(false); }
   };
 
+  const scrollToSection = (section) => {
+    setActiveSection(section);
+    const el = document.getElementById(section.toLowerCase());
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  };
+
   if (loading) return (
     <div style={{ minHeight:'100vh', background:'#050508', display:'flex', alignItems:'center', justifyContent:'center' }}>
       <p style={{ color:'#666' }}>Loading dashboard...</p>
@@ -77,38 +84,42 @@ export default function Dashboard() {
     <div style={{ minHeight:'100vh', background:'#050508', color:'#fff', display:'flex' }}>
 
       {/* Sidebar */}
-      <div style={{ position:'fixed', left:0, top:0, bottom:0, width:'220px', background:'#0a0a12', borderRight:'1px solid #111', padding:'1.5rem', display:'flex', flexDirection:'column' }}>
+      <div style={{ position:'fixed', left:0, top:0, bottom:0, width:'220px', background:'#0a0a12', borderRight:'1px solid #111', padding:'1.5rem', display:'flex', flexDirection:'column', zIndex:100 }}>
         <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'2.5rem' }}>
           <div style={{ width:'32px', height:'32px', background:'linear-gradient(135deg, #6366f1, #8b5cf6)', borderRadius:'8px', display:'flex', alignItems:'center', justifyContent:'center', fontWeight:'bold' }}>M</div>
           <span style={{ fontWeight:'bold' }}>MeterFlow</span>
         </div>
 
-        {[
-  { label: 'Dashboard', path: '/dashboard' },
-  { label: 'APIs', path: '/dashboard' },
-  { label: 'Usage', path: '/dashboard' },
-  { label: 'Billing', path: '/dashboard' }
-].map(item => (
-  <div key={item.label}
-    onClick={() => {
-      const section = document.getElementById(item.label.toLowerCase());
-      if (section) section.scrollIntoView({ behavior: 'smooth' });
-    }}
-    style={{ padding:'0.65rem 0.75rem', borderRadius:'8px', marginBottom:'0.25rem', color:'#aaa', fontSize:'0.9rem', cursor:'pointer', display:'flex', alignItems:'center', gap:'10px' }}>
-    <span style={{ color:'#6366f1', fontSize:'0.6rem' }}>●</span>
-    {item.label}
-  </div>
-))}
+        {['Dashboard', 'APIs', 'Usage', 'Billing'].map(item => (
+          <div key={item}
+            onClick={() => scrollToSection(item)}
+            style={{
+              padding:'0.65rem 0.75rem',
+              borderRadius:'8px',
+              marginBottom:'0.25rem',
+              color: activeSection === item ? '#fff' : '#aaa',
+              background: activeSection === item ? '#1a1a2e' : 'transparent',
+              fontSize:'0.9rem',
+              cursor:'pointer',
+              display:'flex',
+              alignItems:'center',
+              gap:'10px',
+              transition:'all 0.2s'
+            }}>
+            <span style={{ color:'#6366f1', fontSize:'0.6rem' }}>●</span>
+            {item}
+          </div>
+        ))}
 
         <div style={{ marginTop:'auto' }}>
           <button onClick={() => { sessionStorage.removeItem('token'); navigate('/login'); }}
-            style={{ width:'100%', background:'none', border:'1px solid #1a1a2e', color:'#666', padding:'0.65rem', borderRadius:'8px', fontSize:'0.85rem' }}>
+            style={{ width:'100%', background:'none', border:'1px solid #1a1a2e', color:'#666', padding:'0.65rem', borderRadius:'8px', fontSize:'0.85rem', cursor:'pointer' }}>
             Sign Out
           </button>
         </div>
       </div>
 
-      {/* Main */}
+      {/* Main Content */}
       <div style={{ marginLeft:'220px', padding:'2rem', flex:1 }}>
 
         {/* Header */}
@@ -124,7 +135,7 @@ export default function Dashboard() {
         </div>
 
         {/* Stat Cards */}
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(4, 1fr)', gap:'1rem', marginBottom:'2rem' }}>
+        <div id="dashboard" style={{ display:'grid', gridTemplateColumns:'repeat(4, 1fr)', gap:'1rem', marginBottom:'2rem' }}>
           <StatCard label="Total Requests" value={stats?.totalRequests || 0} sub="All time" color="#6366f1" icon="⬡" />
           <StatCard label="Avg Latency" value={(stats?.avgLatency || 0) + 'ms'} sub="Response time" color="#10b981" icon="⬡" />
           <StatCard label="Error Rate" value={stats?.errorRate || '0%'} sub="This month" color="#f59e0b" icon="⬡" />
@@ -140,16 +151,16 @@ export default function Dashboard() {
                 <label style={{ color:'#666', fontSize:'0.8rem', display:'block', marginBottom:'0.4rem' }}>API Name</label>
                 <input value={newApi.name} onChange={e => setNewApi({...newApi, name:e.target.value})}
                   style={{ width:'100%', background:'#050508', color:'#fff', padding:'0.7rem', borderRadius:'8px', border:'1px solid #1a1a2e', outline:'none', boxSizing:'border-box' }}
-                  placeholder="Pokemon API" required />
+                  placeholder="Weather API" required />
               </div>
               <div style={{ flex:2 }}>
                 <label style={{ color:'#666', fontSize:'0.8rem', display:'block', marginBottom:'0.4rem' }}>Base URL</label>
                 <input value={newApi.baseUrl} onChange={e => setNewApi({...newApi, baseUrl:e.target.value})}
                   style={{ width:'100%', background:'#050508', color:'#fff', padding:'0.7rem', borderRadius:'8px', border:'1px solid #1a1a2e', outline:'none', boxSizing:'border-box' }}
-                  placeholder="https://pokeapi.co/api/v2" required />
+                  placeholder="https://api.example.com" required />
               </div>
               <button type="submit" disabled={creating}
-                style={{ background:'#6366f1', color:'#fff', border:'none', padding:'0.7rem 1.5rem', borderRadius:'8px', fontWeight:'600', cursor:'pointer', whiteSpace:'nowrap' }}>
+                style={{ background:'#6366f1', color:'#fff', border:'none', padding:'0.7rem 1.5rem', borderRadius:'8px', fontWeight:'600', cursor:'pointer', whiteSpace:'nowrap', opacity: creating ? 0.7 : 1 }}>
                 {creating ? 'Creating...' : 'Create API'}
               </button>
             </form>
@@ -157,7 +168,7 @@ export default function Dashboard() {
         )}
 
         {/* Charts */}
-        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'1.5rem', marginBottom:'2rem' }}>
+        <div id="usage" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'1.5rem', marginBottom:'2rem' }}>
           <div style={{ background:'#0f0f1a', borderRadius:'14px', border:'1px solid #1a1a2e', padding:'1.5rem' }}>
             <h3 style={{ fontSize:'0.9rem', fontWeight:'600', marginBottom:'0.25rem' }}>Requests (Last 7 days)</h3>
             <p style={{ color:'#555', fontSize:'0.8rem', marginBottom:'1.5rem' }}>Daily API request volume</p>
@@ -194,14 +205,14 @@ export default function Dashboard() {
         </div>
 
         {/* APIs Table */}
-        <div style={{ background:'#0f0f1a', borderRadius:'14px', border:'1px solid #1a1a2e', overflow:'hidden', marginBottom:'1.5rem' }}>
+        <div id="apis" style={{ background:'#0f0f1a', borderRadius:'14px', border:'1px solid #1a1a2e', overflow:'hidden', marginBottom:'1.5rem' }}>
           <div style={{ padding:'1.25rem 1.5rem', borderBottom:'1px solid #111', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
             <h3 style={{ fontSize:'1rem', fontWeight:'600' }}>My APIs</h3>
             <span style={{ color:'#555', fontSize:'0.8rem' }}>{apis.length} total</span>
           </div>
           {apis.length === 0 ? (
             <div style={{ padding:'3rem', textAlign:'center' }}>
-              <p style={{ color:'#555' }}>No APIs yet — click "New API" to get started</p>
+              <p style={{ color:'#555' }}>No APIs yet — click "+ New API" to get started</p>
             </div>
           ) : (
             <table style={{ width:'100%', borderCollapse:'collapse', fontSize:'0.9rem' }}>
@@ -228,7 +239,7 @@ export default function Dashboard() {
         </div>
 
         {/* Billing Summary */}
-        <div style={{ background:'linear-gradient(135deg, #0f0520, #1a0533)', borderRadius:'14px', border:'1px solid #2d1b4e', padding:'1.5rem', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+        <div id="billing" style={{ background:'linear-gradient(135deg, #0f0520, #1a0533)', borderRadius:'14px', border:'1px solid #2d1b4e', padding:'1.5rem', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
           <div>
             <p style={{ color:'#a78bfa', fontSize:'0.8rem', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:'0.5rem' }}>This Month's Usage</p>
             <p style={{ fontSize:'1.8rem', fontWeight:'bold' }}>{billing?.totalRequests || 0} <span style={{ fontSize:'1rem', color:'#666' }}>requests</span></p>
