@@ -83,12 +83,22 @@ export default function Dashboard() {
           <span style={{ fontWeight:'bold' }}>MeterFlow</span>
         </div>
 
-        {['Dashboard', 'APIs', 'Usage', 'Billing'].map(item => (
-          <div key={item} style={{ padding:'0.65rem 0.75rem', borderRadius:'8px', marginBottom:'0.25rem', color:'#aaa', fontSize:'0.9rem', cursor:'pointer', display:'flex', alignItems:'center', gap:'10px' }}>
-            <span style={{ color:'#6366f1', fontSize:'0.6rem' }}>●</span>
-            {item}
-          </div>
-        ))}
+        {[
+  { label: 'Dashboard', path: '/dashboard' },
+  { label: 'APIs', path: '/dashboard' },
+  { label: 'Usage', path: '/dashboard' },
+  { label: 'Billing', path: '/dashboard' }
+].map(item => (
+  <div key={item.label}
+    onClick={() => {
+      const section = document.getElementById(item.label.toLowerCase());
+      if (section) section.scrollIntoView({ behavior: 'smooth' });
+    }}
+    style={{ padding:'0.65rem 0.75rem', borderRadius:'8px', marginBottom:'0.25rem', color:'#aaa', fontSize:'0.9rem', cursor:'pointer', display:'flex', alignItems:'center', gap:'10px' }}>
+    <span style={{ color:'#6366f1', fontSize:'0.6rem' }}>●</span>
+    {item.label}
+  </div>
+))}
 
         <div style={{ marginTop:'auto' }}>
           <button onClick={() => { sessionStorage.removeItem('token'); navigate('/login'); }}
